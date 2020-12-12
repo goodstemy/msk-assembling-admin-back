@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -w",
     "serve-dev": "nodemon ./built/server.js",
-    "serve": "node ./built/server.js"
+    "start": "node ./built/server.js"
   },
+  "heroku-run-build-script": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/goodstemy/msk-assembling-admin-back.git"
