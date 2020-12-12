@@ -1,11 +1,10 @@
 import { ApolloServer } from 'apollo-server-express'
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import { makeExecutableSchema } from 'graphql-tools';
 import * as dotenv from 'dotenv';
 import {resolvers, typeDefs} from "./graphql-types";
-import {buildMongoURI} from "./tools";
+import {connect as dbConnect} from './db';
 
 dotenv.config();
 
@@ -20,26 +19,17 @@ const schema = makeExecutableSchema({
 
 const apolloServer = new ApolloServer({
   schema,
+  cacheControl: false,
 });
 
 apolloServer.applyMiddleware({ app, path: '/graphql' });
 
-const PORT = process.env.PORT || 3001;
-const MONGO_URI = buildMongoURI(process.env.MONGO_USERNAME, process.env.MONGO_PASSWORD, process.env.MONGO_DB_NAME);
+dbConnect({
+  isDebug: true,
+  reconnectTimeout: 15000,
+});
 
-mongoose.set('debug', true);
-mongoose
-  .connect(MONGO_URI,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-  .then(() => {
-    console.log('Db init success');
-  })
-  .catch(err => {
-    console.error(`Error on init db: ${err}`);
-  });
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Started at ::${PORT}`);
