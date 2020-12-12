@@ -5,6 +5,7 @@ import cors from 'cors';
 import { makeExecutableSchema } from 'graphql-tools';
 import * as dotenv from 'dotenv';
 import {resolvers, typeDefs} from "./graphql-types";
+import {buildMongoURI} from "./tools";
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ const apolloServer = new ApolloServer({
 apolloServer.applyMiddleware({ app, path: '/graphql' });
 
 const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/msk-assembling';
+const MONGO_URI = buildMongoURI(process.env.MONGO_USERNAME, process.env.MONGO_PASSWORD, process.env.MONGO_DB_NAME);
 
 mongoose.set('debug', true);
 mongoose
