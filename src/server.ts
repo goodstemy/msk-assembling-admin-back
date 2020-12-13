@@ -5,6 +5,7 @@ import { makeExecutableSchema } from 'graphql-tools';
 import * as dotenv from 'dotenv';
 import {resolvers, typeDefs} from "./graphql-types";
 import {connect as dbConnect} from './db';
+import {getAdminByToken} from "./db/middlewares";
 
 dotenv.config();
 
@@ -19,7 +20,16 @@ const schema = makeExecutableSchema({
 
 const apolloServer = new ApolloServer({
   schema,
+  // TODO: is cacheControl disabling right decision?
   cacheControl: false,
+
+  context: async ({req}) => {
+    const token = req.headers.authorization || '';
+
+    const admin = await getAdminByToken(token);
+
+    return {admin};
+  },
 });
 
 apolloServer.applyMiddleware({ app, path: '/graphql' });
