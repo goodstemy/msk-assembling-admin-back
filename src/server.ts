@@ -28,6 +28,10 @@ const apolloServer = new ApolloServer({
 
     const admin = await getAdminByToken(token);
 
+    if (!Object.keys(admin).length) {
+      return {};
+    }
+
     return {admin};
   },
 });
